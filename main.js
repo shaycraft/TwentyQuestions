@@ -1,54 +1,69 @@
 var tree = {};
 tree.description = 'Is it an animal?';
+tree.class = 'question';
 tree.right = {};
-tree.right.description = 'Is it a bird?';
+tree.right.description = 'bird';
+tree.right.class = 'entry';
 var node = tree;
+var atTop = true;
 
 
-const readline = require('readline');
+const rls = require('readline-sync');
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
-
-processQuestion();
-
-function processQuestion() {
-    if (node.left !== undefined) {
-        rl.question(node.description, (ans) => processYesNo(ans));
+while (true) {
+    var ans = rls.question(getQuestion(node));
+    console.dir(node.right);
+    if (ans == 'y' || ans == 'yes') {
+        if (node.right === undefined) {
+            //node.right = {};
+            //askNewAnimal(node, node.right);
+            console.log('Yay!');
+            node = tree;
+        } else {
+            node = node.right;
+        }
     } else {
-        askGuess();
+        if (node.left === undefined) {
+            node.left = {};
+            node.left = askNewAnimal(node);
+            node = tree;
+        } else {
+            node = node.left;
+        }
     }
 }
 
-function processyesNo(ans) {
-    let x = ans.toLowerCase();
-    if (x === 'y' || ans === 'yes') {
-        node = node.right;
+function askNewAnimal(parent) {
+    var d = rls.question('What is it?');
+    var q = rls.question(`What would distinguish a ${d} from a ${parent.description}?`);
+    var qa = rls.question(`If there animal were ${d} the answer would be?`);
+    child = {}
+    child.description = q;
+    child.class = 'question';
+    if (qa == 'yes' || qa == 'y') {
+        child.right = {};
+        child.right.class = 'entry';
+        child.right.description = d;
     } else {
-        node = node.left;
+        child.left = {};
+        child.left.class = 'entry';
+        child.left.description = d;
     }
 
-    processQuestion();
+    return child;
 }
 
-function askGuess() {
-    rl.question(node.description, (ans) => processGuess(ans));
-}
-
-function processGuess(ans) {
-    if (ans.toLowerCase() === 'y') {
-        console.log('Hooray!');
-        node = tree;
-        processQuestion();
+function getQuestion(n) {
+    if (n.class === 'entry') {
+        console.log('DEBUG:  in getQuestion for entry');
+        return `Is it a ${n.description}?`
     } else {
-        // ask these questions:
-        // What is the animal?
-        // What would distinguish an x from a y?
-        // What would the answer to that question be?
+        console.log('DEBUG:  in getQuestion for question');
+        return n.description;
     }
 }
+
+
 
 /*
 Example python code:

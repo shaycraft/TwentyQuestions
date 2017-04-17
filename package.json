@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/shaycraft/TwentyQuestions/issues"
   },
-  "homepage": "https://github.com/shaycraft/TwentyQuestions#readme"
+  "homepage": "https://github.com/shaycraft/TwentyQuestions#readme",
+  "dependencies": {
+    "readline-sync": "^1.4.7"
+  }
 }

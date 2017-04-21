@@ -3,12 +3,17 @@ tree.description = 'Is it an animal?';
 tree.class = 'question';
 tree.right = {};
 tree.right.description = 'bird';
+tree.right.parent = tree;
 tree.right.class = 'entry';
 var node = tree;
 var atTop = true;
 
 
 const rls = require('readline-sync');
+
+// status
+// works now putting node in right order after adding a new animal, doesn't work after that.
+// TODO:  since ciruclar reference is now caused by parent link, need to write DEBUG_NODE function
 
 while (true) {
     var ans = rls.question(getQuestion(node));
@@ -22,10 +27,18 @@ while (true) {
         } else {
             node = node.right;
         }
-    } else {
+    } else { // answer is no
         if (node.left === undefined) {
-            node.left = {};
-            node.left = askNewAnimal(node);
+            newNode = {};
+            if (node.parent.left !== undefined && node.parent.left.description == node.description) {
+                node.parent.left = newNode;
+            } else {
+                node.parent.right = newNode;
+            }
+            newNode.parent = node.parent;
+            node.parent = undefined;
+            askNewAnimal(newNode, node);
+
             node = tree;
         } else {
             node = node.left;
@@ -33,24 +46,21 @@ while (true) {
     }
 }
 
-function askNewAnimal(parent) {
+function askNewAnimal(newNodeQuestion, node) {
     var d = rls.question('What is it?');
-    var q = rls.question(`What would distinguish a ${d} from a ${parent.description}?`);
+    var q = rls.question(`What would distinguish a ${d} from a ${node.description}?`);
     var qa = rls.question(`If there animal were ${d} the answer would be?`);
-    child = {}
-    child.description = q;
-    child.class = 'question';
+    newNode = {}
+    newNode.description = d;
+    newNode.class = 'entry';
+    newNodeQuestion.description = q;
+    newNodeQuestion.class = 'question';
     if (qa == 'yes' || qa == 'y') {
-        child.right = {};
-        child.right.class = 'entry';
-        child.right.description = d;
+        newNodeQuestion.right = newNode;
     } else {
-        child.left = {};
-        child.left.class = 'entry';
-        child.left.description = d;
+        newNodeQuestion.left = newNode;
     }
 
-    return child;
 }
 
 function getQuestion(n) {

@@ -56,10 +56,13 @@ function askNewAnimal(newNodeQuestion, node) {
     newNodeQuestion.class = 'question';
     if (qa == 'yes' || qa == 'y') {
         newNodeQuestion.right = newNode;
+        newNodeQuestion.left = node;
     } else {
         newNodeQuestion.left = newNode;
+        newNodeQuestion.right = node;
     }
-
+    newNode.parent = newNodeQuestion;
+    node.parent = newNodeQuestion;
 }
 
 function getQuestion(n) {

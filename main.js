@@ -16,12 +16,11 @@ const rls = require('readline-sync');
 // TODO:  since ciruclar reference is now caused by parent link, need to write DEBUG_NODE function
 
 while (true) {
+    DebugTree(node);
     var ans = rls.question(getQuestion(node));
-    console.dir(node.right);
     if (ans == 'y' || ans == 'yes') {
         if (node.right === undefined) {
-            //node.right = {};
-            //askNewAnimal(node, node.right);
+
             console.log('Yay!');
             node = tree;
         } else {
@@ -73,7 +72,52 @@ function getQuestion(n) {
     }
 }
 
+function DebugNode(node) {
+    console.log('################DEBUG################');
+    console.log(`Description: ${node.description}`)
+    if (node.left !== undefined) {
+        console.log(`left: ${node.left.description}`);
+    } else {
+        console.log('left: null');
+    }
+    if (node.right !== undefined) {
+        console.log(`right: ${node.right.description}`);
+    } else {
+        console.log('right: null');
+    }
+    console.log('#####################################');
+}
 
+function DebugTree(n, depth) {
+    var d = depth || 0;
+    if (d === 0) {
+        console.log('######################DEBUG TREE#####################');
+    }
+
+    PrintNode(n.description, d);
+
+    if (n.right !== undefined) {
+        PrintNode('***RIGHT***', d + 1);
+        DebugTree(n.right, d + 1);
+    }
+    if (n.left !== undefined) {
+        PrintNode('***LEFT***', d + 1);
+        DebugTree(n.left, d + 1);
+    }
+
+    if (d === 0) {
+        console.log('####################################################');
+    }
+}
+
+function PrintNode(txt, depth) {
+    sb = [];
+    for (var i = 0; i < depth; i++) {
+        sb.push('----');
+    }
+    sb.push(txt);
+    console.log(sb.join(''));
+}
 
 /*
 Example python code:

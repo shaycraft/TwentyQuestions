@@ -13,14 +13,17 @@ var node = tree;
 var atTop = true;
 
 
-const rls = require('readline-sync');
+const rl = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-while (true) {
-    DebugTree(node);
-    var ans = rls.question(getQuestion(node));
+var rls = require('readline-sync');
+
+var answerQuestion = function(ans) {
+    console.log('DEBUG:  in answerQuestion');
     if (ans == 'y' || ans == 'yes') {
         if (node.right === undefined) {
-
             console.log('Yay!');
             node = tree;
         } else {
@@ -43,7 +46,16 @@ while (true) {
             node = node.left;
         }
     }
+    processNode();
 }
+
+var processNode = function() {
+    DebugTree(node);
+    rl.question(getQuestion(node), answerQuestion);
+
+}
+
+processNode();
 
 function askNewAnimal(newNodeQuestion, node) {
     var d = rls.question('What is it?');

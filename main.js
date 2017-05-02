@@ -5,15 +5,15 @@ tree.right = {};
 tree.right.description = 'bird';
 tree.right.parent = tree;
 tree.right.class = 'entry';
+tree.left = {};
+tree.left.description = 'rock'
+tree.left.parent = tree;
+tree.left.class = 'entry';
 var node = tree;
 var atTop = true;
 
 
 const rls = require('readline-sync');
-
-// status
-// works now putting node in right order after adding a new animal, doesn't work after that.
-// TODO:  since ciruclar reference is now caused by parent link, need to write DEBUG_NODE function
 
 while (true) {
     DebugTree(node);
@@ -67,10 +67,8 @@ function askNewAnimal(newNodeQuestion, node) {
 
 function getQuestion(n) {
     if (n.class === 'entry') {
-        console.log('DEBUG:  in getQuestion for entry');
         return `Is it a ${n.description}?`
     } else {
-        console.log('DEBUG:  in getQuestion for question');
         return n.description;
     }
 }
@@ -121,32 +119,3 @@ function PrintNode(txt, depth) {
     sb.push(txt);
     console.log(sb.join(''));
 }
-
-/*
-Example python code:
-def main():
-    "Guess the animal. Add a new node for a wrong guess."
-
-    while 1:
-        print
-        if not yes("Are you thinking of an animal? "): break
-        p = knowledge
-        while p.left != None:
-            if yes(p.question + "? "):
-                p = p.right
-            else:
-                p = p.left
-
-        if yes("Is it a " + p.question + "? "): continue
-        animal = raw_input("What is the animals name? ")
-        question = raw_input("What question would distinguish a %s from a %s? "
-                             % (animal, p.question))
-        p.left = node(p.question)
-        p.right = node(animal)
-        p.question = question
-
-        if not yes("If the animal were %s the answer would be? " % animal):
-            (p.right, p.left) = (p.left, p.right)
-
-main()
-*/

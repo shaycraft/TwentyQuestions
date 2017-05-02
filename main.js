@@ -13,22 +13,24 @@ var node = tree;
 var atTop = true;
 
 
-const rls = require('readline-sync');
+const rl = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-while (true) {
-    DebugTree(node);
-    var ans = rls.question(getQuestion(node));
+var answerQuestion = function(ans) {
     if (ans == 'y' || ans == 'yes') {
         if (node.right === undefined) {
-
             console.log('Yay!');
             node = tree;
         } else {
             node = node.right;
         }
+        processNode();
     } else { // answer is no
         if (node.left === undefined) {
             newNode = {};
+            newNode.description = 'blank';
             if (node.parent.left !== undefined && node.parent.left.description == node.description) {
                 node.parent.left = newNode;
             } else {
@@ -38,17 +40,23 @@ while (true) {
             node.parent = undefined;
             askNewAnimal(newNode, node);
 
-            node = tree;
+            //node = tree;
         } else {
             node = node.left;
+            processNode();
         }
     }
 }
 
-function askNewAnimal(newNodeQuestion, node) {
-    var d = rls.question('What is it?');
-    var q = rls.question(`What would distinguish a ${d} from a ${node.description}?`);
-    var qa = rls.question(`If there animal were ${d} the answer would be?`);
+var processNode = function() {
+    rl.question(getQuestion(node), answerQuestion);
+
+}
+
+processNode();
+
+
+function askNewAnimal_final(d, q, qa, newNodeQuestion, oldNode) {
     newNode = {}
     newNode.description = d;
     newNode.class = 'entry';
@@ -56,13 +64,29 @@ function askNewAnimal(newNodeQuestion, node) {
     newNodeQuestion.class = 'question';
     if (qa == 'yes' || qa == 'y') {
         newNodeQuestion.right = newNode;
-        newNodeQuestion.left = node;
+        newNodeQuestion.left = oldNode;
     } else {
         newNodeQuestion.left = newNode;
-        newNodeQuestion.right = node;
+        newNodeQuestion.right = oldNode;
     }
     newNode.parent = newNodeQuestion;
-    node.parent = newNodeQuestion;
+    oldNode.parent = newNodeQuestion;
+
+    node = tree;
+    processNode();
+}
+
+function askNewAnimal_whatdistans(d, q, newNodeQuestion, oldNode) {
+    rl.question(`If there animal were ${d} the answer would be?`, (qa) => { askNewAnimal_final(d, q, qa, newNodeQuestion, oldNode) });
+}
+
+function askNewAnimal_whatdistinguish(d, newNodeQuestion, oldNode) {
+    rl.question(`What would distinguish a ${d} from a ${oldNode.description}?`, (q) => { askNewAnimal_whatdistans(d, q, newNodeQuestion, oldNode) });
+}
+
+function askNewAnimal(newNodeQuestion, oldNode) {
+    rl.question('What is it?', d => { askNewAnimal_whatdistinguish(d, newNodeQuestion, oldNode); });
+
 }
 
 function getQuestion(n) {
